@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.views import generic
 from django.utils import timezone
+import random
 
 from bets.models import User, BetRoom, Option, Bet
 
@@ -23,9 +24,42 @@ class CreateRoom(generic.TemplateView):
     template_name = 'bets/create.html'
 
 
-class RoomView(generic.DetailView):
+class RoomView(generic.TemplateView):
     model = BetRoom
     template_name = 'bets/room.html'
+
+def make_betroom(request):
+    rand = ''.join(random.choice('0123456789abcdefghijklmnopqrstuvwxyz') for i in range(12))
+    try: 
+        print '1'*80
+        b = BetRoom(room_name=request.POST['name'], 
+                    date_created=timezone.now(),
+                    password=request.POST['pw'], 
+                    is_active=True, 
+                    url=rand
+                    )
+        b.save()
+        options = [i for i in request.POST.keys() if 'option' in i]
+        for x in options:
+            o = Option(betroom=b,
+                       option_name=request.POST[x]
+                       )
+            o.save()
+        print '8'*80
+
+    except:
+        # Redisplay the question voting form.
+        return render(request, 'bets/room.html', {
+            'question': b,
+            'error_message': "You didn't select a choice.",
+        })
+    else:
+        print '3'*80
+        b.save()
+        # Always return an HttpResponseRedirect after successfully dealing
+        # with POST data. This prevents data from being posted twice if a
+        # user hits the Back button.
+        return HttpResponseRedirect(reverse('room'))
 
 # def vote(request, question_id):
 #     p = get_object_or_404(Question, pk=question_id)
