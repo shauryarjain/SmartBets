@@ -1,0 +1,41 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+</head>
+<body>
+	<form action = "/room/" method = "post" id = "form">
+		{% csrf_token %}
+		Name: <br>
+		<input type = "text" name = "name">
+		<br>
+		Password:<br>
+		<input type = "text" name = "pw">
+		<br>
+		Option: <br>
+		<input type = "text" name = "o1">
+		<br>
+		Option: <br>
+		<input type = "text" name = "o2">
+		<br>
+		<div id = "more"></div>
+		<a id = "add">Add</a>
+		<a id = "rm">Remove</a>
+		<input type="submit" value="Go!" />
+	</form>
+	<script>
+	$("#add").on("click", function() {
+		console.log("function fired");
+		var o = $("<p>");
+		o.append("Option: <br> <input type = 'text'><br>");
+		$("#more").append(o);
+	});
+
+	$("#rm").on("click", function() {
+		$("#more p:last-child").remove();
+	});
+	</script>
+</body>
+</html>
+
