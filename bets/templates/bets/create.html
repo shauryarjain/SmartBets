@@ -1,44 +1,90 @@
 {% load staticfiles %}
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
 <head>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-	<link rel="stylesheet" type="text/css" href="{% static 'create_style.css' %}">
+<title>Create Your Betting Room</title>
+<link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="{% static 'bets/create_style.css' %}">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- -->
+<script>var __links = document.querySelectorAll('a');function __linkClick(e) { parent.window.postMessage(this.href, '*');} ;for (var i = 0, l = __links.length; i < l; i++) {if ( __links[i].getAttribute('data-t') == '_blank' ) { __links[i].addEventListener('click', __linkClick, false);}}</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script>$(document).ready(function(c) {
+	$('.alert-close').on('click', function(c){
+		$('.message').fadeOut('slow', function(c){
+	  		$('.message').remove();
+		});
+	});
+});
+</script>
 </head>
-<body>
-	<form action="/make_betroom/" method="post" id="form">
-		{% csrf_token %}
-		Name: <br>
-		<input type="text" name="name">
-		<br>
-		Password:<br>
-		<input type="text" name="pw">
-		<br>
-		Option: <br>
-		<input type="text" name="option_1">
-		<br>
-		Option: <br>
-		<input type="text" name="option_2">
-		<br>
-		<div id = "more"></div>
-		<a id = "add">Add</a>
-		<a id = "rm">Remove</a>
-		<input type="submit" value="Go!" />
-	</form>
-	<script>
+<body style="background: url:'{% static 'bets/bg.jpg' %}'">
+<!-- contact-form -->
+<div class="message warning">
+<div class="inset">
+	<div class="login-head">
+		<h1>Create Your Betting Room</h1>
+		 <div class="alert-close"> </div>
+	</div>
+		<form action="/make_betroom/" method="post" id="form">
+			{% csrf_token %}
+			<li>
+				<input type="text" name="name" class="text" value="Room Name" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Room Name';}">
+			</li>
+				<div class="clear"> </div>
+			<li>
+				<input type="password" name="pw" value="Room Password" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Room Password';}">
+			</li>
+			<div class="clear"> </div>
+			<li>
+				<input type="text" name="option_1" class="text" value="Choice #1" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Choice #1';}">
+			</li>
+				<div class="clear"> </div>
+			<li>
+				<input type="text" name="option_2" class="text" value="Choice #2" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Choice #2';}">
+			</li>
+				<div class="clear"> </div>
+
+			<div id="more">
+
+			</div>
+			<div class="create-bottom-row">
+				<div class="submit">
+					<input type="submit" class="room-button" value="Create Room">
+					<input type="null" id="add" class="room-button" value="Add Choice">
+					<input type="null" id="rm" class="room-button" value="Remove Choice">
+							  <div class="clear">  </div>
+
+				</div>
+			</div>
+
+		</form>
+		</div>
+	</div>
+	</div>
+	<div class="clear"> </div>
+
+<script>
 	var id = 3
 	$("#add").on("click", function() {
 		console.log("function fired");
+		var s = '<li><input type="text" name="option_' + id +
+		'" class="text" value="Choice #' + id + '" onfocus="this.value = ' +
+		"'';" + ' onblur="if (this.value == ' +
+		"'') {this.value = 'Choice #" + id + "';}" + '></li><div class="clear"> </div>';
+
 		var o = $("<p>");
-		o.append('Option: <br> <input type="text" name="option_' + id + '"><br>');
+		o.append(s);
 		id++;
 		$("#more").append(o);
 	});
 
 	$("#rm").on("click", function() {
+		id--;
 		$("#more p:last-child").remove();
 	});
-	</script>
+</script>
 </body>
 </html>
-
