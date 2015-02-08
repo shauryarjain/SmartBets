@@ -29,9 +29,10 @@ class RoomView(generic.TemplateView):
     template_name = 'bets/room.html'
 
 def room_view(request, url):
+    venmo_auth = request.GET.get('access_token')
     try:
         room = BetRoom.objects.get(url=url)
-        print room
+        
     except:
         # Redisplay the question voting form.
         return render(request, 'bets/room.html', {
@@ -41,7 +42,13 @@ def room_view(request, url):
     else:
         return render(request, 'bets/room.html', {
             'bet_room': room.room_name,
+            'venmo_auth': venmo_auth,
+            'url': url
             })
+
+# def make_bet(request):
+#     # b = Bet(date_created=timezone.now(),
+#     #         betroom_id = )
 
 
 def make_betroom(request):

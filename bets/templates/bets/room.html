@@ -8,27 +8,22 @@
 </head>
 <body>
 	{% if venmo_auth %}
-		<form action="/make_betroom/" method="post" id="form">
+		<form action="/make_bet/" method="post" id="form">
 			{% csrf_token %}
 			Name: <br>
 			<input type="text" name="name">
 			<br>
-			Password:<br>
-			<input type="text" name="pw">
+			Choice:<br>
+			<input type="text" name="choice">
 			<br>
-			Option: <br>
-			<input type="text" name="option_1">
+			Amount ($): <br>
+			<input type="text" name="amount">
 			<br>
-			Option: <br>
-			<input type="text" name="option_2">
-			<br>
-			<div id = "more"></div>
-			<a id = "add">Add</a>
-			<a id = "rm">Remove</a>
+			<input name="access" type="hidden" value="{{ venmo_auth }}">
 			<input type="submit" value="Make A Bet" />
 		</form>
 	{% else %}
-		<a href = "https://venmo.com/oauth/authorize?client_id=2347&scope=make_payments,access_profile,access_phone,access_friends,access_balance&response_type=code">Authenticate with Venmo</a>
+		<a href = "https://api.venmo.com/v1/oauth/authorize?client_id=2347&scope=access_profile&redirect_uri=http://127.0.0.1:8000/room/{{ url }}/">Authenticate with Venmo</a>
 	{% endif %}
 </body>
 </html>
