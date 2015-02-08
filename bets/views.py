@@ -34,10 +34,13 @@ def room_view(request, url):
     try:
         room = BetRoom.objects.get(url=url)
         
-    except:
+    except Exception as exception:
+        name_of_exception = type(exception).__name__
         # Redisplay the question voting form.
         return render(request, 'bets/room.html', {
             'question': b,
+            'url': 'ERROR',
+            'error': name_of_exception,
             'error_message': "You didn't select a choice.",
         })
     else:
