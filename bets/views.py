@@ -5,6 +5,7 @@ from django.views import generic
 from django.utils import timezone
 import random
 import requests
+import json
 
 from bets.models import User, BetRoom, Option, Bet
 
@@ -51,7 +52,7 @@ def room_view(request, url):
             })
 
 def make_bet(request):
-    betroom = BetRoom.objects.get(pk=int(request.POST.get('betroom_id')))
+    betroom = BetRoom.objects.get(pk=int(request.POST.get('bet_room_id')))
 
 # r = requests.post('https://api.venmo.com/v1/payments', 
 #     data={'access_token': 'yZVbWJFyT3xFfjaB2DypJ9YfD9MMqAK3', 
@@ -78,7 +79,7 @@ def make_bet(request):
     print request.POST
     response = r.json()['data']['payment']['actor']['username']
     b = Bet(date_created=timezone.now(),
-            betroom_id = BetRoom.objects.get(pk=int(request.POST.get('betroom_id'))),
+            betroom_id = BetRoom.objects.get(pk=int(request.POST.get('bet_room_id'))),
             from_id=response,
             to_id='shaurya-jain',
             bet_type='PAY_IN',
@@ -127,6 +128,80 @@ def make_betroom(request):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('room', args=[rand]))
+
+
+def getdata(request, url):
+    bet_room = BetRoom.objects.get(url=url)
+    print 'betroom', bet_room
+    options = bet_room.options.all()
+    print 'options', options
+    transactions = bet_room.bets.order_by('-date_created')
+    print 'transactions', transactions
+    output = []
+    freq = {}
+    for option in options:
+        freq[option.option_name] = 0
+
+    for i, bet in enumerate(transactions.all()):
+        freq[bet.bet_option.option_name] += float(bet.amount)
+        output.append({'State': str(i),
+                       'freq': freq,
+                       'date': 1})
+    return HttpResponse(json.dumps(output), content_type='application/json')
+
+def validate_password(request):
+    room = BetRoom.objects.get(pk=int(request.POST.get('bet_room_id')))
+    if room.password == request.POST.get('pw'):
+        return render(request, 'bets/room.html', {
+        'bet_room': room.room_name,
+        'bet_room_id': room.pk,
+        'venmo_auth': request.POST.get('access'),
+        'options': room.options.all(),
+        'bets': room.bets.all(),
+        'url': room.url,
+        'password': 1
+        })
+    else:
+        return render(request, 'bets/room.html', {
+            'bet_room': room.room_name,
+            'bet_room_id': room.pk,
+            'venmo_auth': request.POST.get('access'),
+            'options': room.options.all(),
+            'bets': room.bets.all(),
+            'url': room.url
+            })
+
+def make_payments(request):
+    betroom = BetRoom.objects.get(pk=int(request.POST.get('bet_room_id')))
+    #bet_room = BetRoom.objects.get(url=url)
+    options = betroom.options.all()
+    print 'options', options
+    transactions = betroom.bets.order_by('-date_created')
+    print 'transactions', transactions
+    prize = 0.0
+    count = 0
+    for bet in transactions.all():
+        #if bet.bet_option != request.POST.get('choice'):
+        print request.POST.get('choice')
+        prize += float(bet.amount)
+        count += 1
+    prize = prize/count
+    print 'prize', prize
+    print 'count', count
+    for bet in transactions.all():
+        print 'choice', request.POST.get('choice')            
+        print 'from id', bet.from_id
+        print 'bet option', bet.bet_option
+        if str(bet.bet_option) == str(request.POST.get('choice')):
+            r = requests.post('https://api.venmo.com/v1/payments', 
+                data={
+                    'access_token': 'nSgCrkMbDRvfPephw9barKPzhbPjcfH9',
+                    'user_id': str(bet.from_id),
+                    'note': 'You won a bet!',
+                    'amount': prize,
+                    })
+            print r
+    return HttpResponseRedirect(reverse('index'))
 
 # def vote(request, question_id):
 #     p = get_object_or_404(Question, pk=question_id)

@@ -72,6 +72,7 @@ form li{
     background:#F0EEF0;
 
 }
+
 .icon{
     background:url(../images/icons.png)  no-repeat 0px 0px;
     height:30px;
@@ -117,6 +118,7 @@ input[type="text"]:hover, input[type="password"]:hover{
 /*************************/
 .submit{
     padding-top:3em;
+    padding-left: 1.5em;
 }
 input[type="submit"], input[type="null"] {
     float: left;
@@ -198,11 +200,15 @@ input[type="submit"]:hover, input[type="null"]:hover {
     transition: color 0.2s ease-in-out;
     width: 30px;
 }
+.room-button {
+	padding: 10px 20px 10px 14px !important;
+	font-size: 15px !important;
+}
 /*-----start-responsive-design------*/
 @media (max-width:1440px){
 .message.warning {
-        margin: 11% auto 0;
-        width: 30%;
+        margin: 5% auto 5%;
+        width: 40%;
     }
     .footer {
     left: 44%;

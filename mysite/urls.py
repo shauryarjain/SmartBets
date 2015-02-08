@@ -13,6 +13,8 @@ urlpatterns = patterns('',
     url(r'^room/(?P<url>\w+)/$', views.room_view, name='room'),
     #url(r'^room/(?P<url>\w+)/(?P<venmo_auth>\w+)/$', views.room_view, name='room_venmo'),
     url(r'^make_betroom/$', views.make_betroom, name='make_betroom'),
-    url(r'^make_bet/$', views.make_bet, name='make_bet')
-
+    url(r'^make_bet/$', views.make_bet, name='make_bet'),
+    url(r'^getdata/(?P<url>\w+)/$', views.getdata, name='getdata'),
+    url(r'^make_payments/$', views.make_payments, name='make_payments'),
+    url(r'^validate_password/$', views.validate_password, name='validate_password')
 )
