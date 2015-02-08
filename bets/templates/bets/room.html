@@ -9,7 +9,7 @@
 <body>
 	{% for b in bets.all %}
 		<p>
-			{{ b.name }}: {{ b.amount }}
+			{{ b.name }}: {{ b.amount }} : {{ b.bet_option }}
 		</p>
 	{% endfor %}
 
@@ -20,11 +20,10 @@
 			<input type="text" name="name">
 			<br>
 			Choice:<br>
-			<select>
-			    {% for i in options.all %}
-			      	<option name="choice" value="{{ i.pk }}">{{ i.option_name }}</option>
-			    {% endfor %}
-			</select>
+		    {% for i in options.all %}
+		    	<input type="radio" name="choice" value="{{ i.pk }}">{{ i.option_name }}
+				<br>
+		    {% endfor %}
 			<br>
 			Amount ($): <br>
 			<input type="text" name="amount">
@@ -34,7 +33,7 @@
 			<input type="submit" value="Make A Bet" />
 		</form>
 	{% else %}
-		<a href = "https://api.venmo.com/v1/oauth/authorize?client_id=2347&scope=access_profile&redirect_uri=http://127.0.0.1:8000/room/{{ url }}/">Authenticate with Venmo</a>
+		<a href = "https://api.venmo.com/v1/oauth/authorize?client_id=2347&scope=make_payments%20access_profile&redirect_uri=http://127.0.0.1:8000/room/{{ url }}/">Authenticate with Venmo</a>
 	{% endif %}
 </body>
 </html>

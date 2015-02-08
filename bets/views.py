@@ -52,20 +52,33 @@ def room_view(request, url):
 
 def make_bet(request):
     betroom = BetRoom.objects.get(pk=int(request.POST.get('betroom_id')))
+
+# r = requests.post('https://api.venmo.com/v1/payments', 
+#     data={'access_token': 'yZVbWJFyT3xFfjaB2DypJ9YfD9MMqAK3', 
+#     'phone': '7134590138', 'note': 'testing', 'amount': 0.01})
+# Last login: Sat Feb 7 23:26:03 on ttys000
+# Shauryas-MacBook-Pro:~ shaurya$ curl https://api.venmo.com/v1/payments -d 
+# access_token=yZVbWJFyT3xFfjaB2DypJ9YfD9MMqAK3 -d phone=7134590138 -d amount=0.10 
+# -d note="Delivery."
+
+# {"data": {"balance": "995.94", "payment": {"status": "settled", "refund": null, "medium": "", "id": "1615665900784976178", "fee": null, "date_completed": "2015-02-08T04:39:44.245878", "target": {"phone": null, "type": "user", "email": null, "user": {"username": "margaret-li", "first_name": "Margaret", "last_name": "Li", "display_name": "Margaret Li", "about": "No Short Bio", "profile_picture_url": "https://graph.facebook.com/727587894/picture?type=square", "id": "1273477843648512846", "date_joined": "2013-10-24T01:33:09"}}, "audience": "public", "actor": {"username": "shaurya-jain", "first_name": "Shaurya", "last_name": "Jain", "display_name": "Shaurya Jain", "about": "No Short Bio", "profile_picture_url": "https://s3.amazonaws.com/venmo/no-image.gif", "id": "1406025693396992353", "date_joined": "2014-04-24T22:42:04"}, "note": "Delivery.", "amount": 0.1, "action": "pay", "date_created": "2015-02-08T04:39:44.188339"}}}Shauryas-MacBook-Pro:~ shaurya$
     r = requests.post('https://api.venmo.com/v1/payments', data={
-        'access_token': request.POST.get('access'),
-        'phone': '8184066164',
+        'access_token': str(request.POST.get('access')),
+        'phone': '7134590138',
         'note': 'Bet placed on {}'.format(request.POST.get('choice')),
-        'amount': request.POST.get('amount'),
+        'amount': float(request.POST.get('amount')),
         })
-    print {'access_token': request.POST.get('access'),
-        'phone': '8184066164',
+    print {
+        'access_token': str(request.POST.get('access')),
+        'phone': '7134590138',
         'note': 'Bet placed on {}'.format(request.POST.get('choice')),
-        'amount': float(request.POST.get('amount'))}
+        'amount': float(request.POST.get('amount')),
+        }
     print r.json()
-    response = r.json()['data']['actor']['username']
+    print request.POST
+    response = r.json()['data']['payment']['actor']['username']
     b = Bet(date_created=timezone.now(),
-            betroom_id = int(request.POST.get('betroom_id')),
+            betroom_id = BetRoom.objects.get(pk=int(request.POST.get('betroom_id'))),
             from_id=response,
             to_id='shaurya-jain',
             bet_type='PAY_IN',
@@ -77,10 +90,9 @@ def make_bet(request):
     return render(request, 'bets/room.html', {
             'bet_room': betroom.room_name,
             'bet_room_id': betroom.pk,
-            'venmo_auth': venmo_auth,
             'options': betroom.options.all(),
             'bets': betroom.bets.all(),
-            'url': urls
+            'url': betroom.url
             })
 
 
