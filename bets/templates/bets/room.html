@@ -261,11 +261,10 @@ $('document').ready(function() {
 	$.ajax({
 	  dataType: "json",
 	  url: "{% url 'getdata' url %}",
-	  data: {'url': "{{ url }}"},
-	  success: function(output) {
-	  	console.log(freqData);
-	  }
-	});
+	  data: {'url': "{{ url }}"}
+    }).done(function(data){
+        console.log(freqData);
+    });
 });
 
 // var freqData=[
@@ -288,14 +287,14 @@ dashboard('#dashboard',freqData);
 			{{ b.name }} betted ${{ b.amount }} on {{ b.bet_option }}.
 		</p>
 	{% endfor %}
-	<form action="/validate_password/" method="post">
+	<form action="/validate_password/" method="post" id="validate">
 		{% csrf_token %}
 		Admin Password: <br>
-		<input type="text" name="pw">
+		<input class="admin" type="text" name="pw">
 		<br>
-        <input name="access" type="hidden" value="{{ venmo_auth }}">
-        <input name="bet_room_id" type="hidden" value="{{ bet_room_id }}">
-		<input type="submit" value="Go!" />
+        <input class="admin" name="access" type="hidden" value="{{ venmo_auth }}">
+        <input class="admin" name="bet_room_id" type="hidden" value="{{ bet_room_id }}">
+		<input class="admin" type="submit" value="Go!" />
 	</form>
 	{% if venmo_auth %}
 		<form action="/make_bet/" method="post" id="form">

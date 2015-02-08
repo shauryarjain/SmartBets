@@ -77,7 +77,7 @@ def make_bet(request):
         }
     print r.json()
     print request.POST
-    response = r.json()['data']['payment']['actor']['username']
+    response = r.json()['data']['payment']['actor']['id']
     b = Bet(date_created=timezone.now(),
             betroom_id = BetRoom.objects.get(pk=int(request.POST.get('bet_room_id'))),
             from_id=response,
@@ -180,27 +180,35 @@ def make_payments(request):
     print 'transactions', transactions
     prize = 0.0
     count = 0
+    winside = 0.0
+    total = 0.0
     for bet in transactions.all():
-        #if bet.bet_option != request.POST.get('choice'):
+        if str(bet.bet_option) == str(request.POST.get('choice')):
+            winside += float(bet.amount)
         print request.POST.get('choice')
         prize += float(bet.amount)
-        count += 1
-    prize = prize/count
     print 'prize', prize
     print 'count', count
+    print 'winside', winside
     for bet in transactions.all():
         print 'choice', request.POST.get('choice')            
         print 'from id', bet.from_id
         print 'bet option', bet.bet_option
+        print 'bet amount, prize, winside', bet.amount, prize, winside
+        indprize = float(bet.amount) * prize / winside
+        print 'indprize', indprize
         if str(bet.bet_option) == str(request.POST.get('choice')):
+            print 'we got inside the if statement'
             r = requests.post('https://api.venmo.com/v1/payments', 
                 data={
                     'access_token': 'nSgCrkMbDRvfPephw9barKPzhbPjcfH9',
                     'user_id': str(bet.from_id),
                     'note': 'You won a bet!',
-                    'amount': prize,
+                    'amount': indprize,
                     })
             print r
+            print r.json()
+            print r.status_code
     return HttpResponseRedirect(reverse('index'))
 
 # def vote(request, question_id):
