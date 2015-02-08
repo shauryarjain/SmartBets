@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.views import generic
 from django.utils import timezone
 import random
+import requests
 
 from bets.models import User, BetRoom, Option, Bet
 
@@ -42,13 +43,45 @@ def room_view(request, url):
     else:
         return render(request, 'bets/room.html', {
             'bet_room': room.room_name,
+            'bet_room_id': room.pk,
             'venmo_auth': venmo_auth,
+            'options': room.options.all(),
+            'bets': room.bets.all(),
             'url': url
             })
 
-# def make_bet(request):
-#     # b = Bet(date_created=timezone.now(),
-#     #         betroom_id = )
+def make_bet(request):
+    betroom = BetRoom.objects.get(pk=int(request.POST.get('betroom_id')))
+    r = requests.post('https://api.venmo.com/v1/payments', data={
+        'access_token': request.POST.get('access'),
+        'phone': '8184066164',
+        'note': 'Bet placed on {}'.format(request.POST.get('choice')),
+        'amount': request.POST.get('amount'),
+        })
+    print {'access_token': request.POST.get('access'),
+        'phone': '8184066164',
+        'note': 'Bet placed on {}'.format(request.POST.get('choice')),
+        'amount': float(request.POST.get('amount'))}
+    print r.json()
+    response = r.json()['data']['actor']['username']
+    b = Bet(date_created=timezone.now(),
+            betroom_id = int(request.POST.get('betroom_id')),
+            from_id=response,
+            to_id='shaurya-jain',
+            bet_type='PAY_IN',
+            bet_option=Option.objects.get(pk=int(request.POST.get('choice'))),
+            name=request.POST.get('name'),
+            amount=request.POST.get('amount')
+            )
+    b.save()
+    return render(request, 'bets/room.html', {
+            'bet_room': betroom.room_name,
+            'bet_room_id': betroom.pk,
+            'venmo_auth': venmo_auth,
+            'options': betroom.options.all(),
+            'bets': betroom.bets.all(),
+            'url': urls
+            })
 
 
 def make_betroom(request):

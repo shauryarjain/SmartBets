@@ -2,6 +2,7 @@ import datetime
 
 from django.db import models
 from django.utils import timezone
+from datetime import datetime
 
 BET_CHOICES = (
     ('PAY_IN', 'Pay In'), 
@@ -23,7 +24,7 @@ class User(models.Model):
 
 class BetRoom(models.Model):
     room_name = models.CharField(max_length=255)
-    date_created = models.DateTimeField('datecreated')
+    date_created = models.DateTimeField(default=datetime.now, blank=True)
     password = models.CharField(max_length=50)
     is_active = models.BooleanField(default=False)
     url = models.CharField(max_length=255)
@@ -40,10 +41,11 @@ class Option(models.Model):
         return self.option_name
 
 class Bet(models.Model):
-    date_created = models.DateTimeField('datecreated')
+    date_created = models.DateTimeField(default=datetime.now, blank=True)
     betroom_id = models.ForeignKey(BetRoom, related_name='bets')    
     from_id = models.CharField(max_length=255)
     to_id = models.CharField(max_length=255)
     bet_type = models.CharField(max_length=20, choices=BET_CHOICES)
     bet_option = models.ForeignKey(Option, related_name='transactions')
     name = models.CharField(max_length=255)
+    amount = models.DecimalField(default=0, max_digits=6, decimal_places=2)

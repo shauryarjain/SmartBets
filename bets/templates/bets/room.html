@@ -7,6 +7,12 @@
 	</title>
 </head>
 <body>
+	{% for b in bets.all %}
+		<p>
+			{{ b.name }}: {{ b.amount }}
+		</p>
+	{% endfor %}
+
 	{% if venmo_auth %}
 		<form action="/make_bet/" method="post" id="form">
 			{% csrf_token %}
@@ -14,12 +20,17 @@
 			<input type="text" name="name">
 			<br>
 			Choice:<br>
-			<input type="text" name="choice">
+			<select>
+			    {% for i in options.all %}
+			      	<option name="choice" value="{{ i.pk }}">{{ i.option_name }}</option>
+			    {% endfor %}
+			</select>
 			<br>
 			Amount ($): <br>
 			<input type="text" name="amount">
 			<br>
 			<input name="access" type="hidden" value="{{ venmo_auth }}">
+			<input name="betroom_id" type="hidden" value="{{ bet_room_id }}">
 			<input type="submit" value="Make A Bet" />
 		</form>
 	{% else %}
