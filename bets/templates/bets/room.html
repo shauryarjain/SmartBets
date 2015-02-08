@@ -2,8 +2,33 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<title>
+		{{ bet_room }}
+	</title>
 </head>
 <body>
-	HERE'S A ROOM HI
+	{% if venmo_auth %}
+		<form action="/make_betroom/" method="post" id="form">
+			{% csrf_token %}
+			Name: <br>
+			<input type="text" name="name">
+			<br>
+			Password:<br>
+			<input type="text" name="pw">
+			<br>
+			Option: <br>
+			<input type="text" name="option_1">
+			<br>
+			Option: <br>
+			<input type="text" name="option_2">
+			<br>
+			<div id = "more"></div>
+			<a id = "add">Add</a>
+			<a id = "rm">Remove</a>
+			<input type="submit" value="Make A Bet" />
+		</form>
+	{% else %}
+		<a href = "https://venmo.com/oauth/authorize?client_id=2347&scope=make_payments,access_profile,access_phone,access_friends,access_balance&response_type=code">Authenticate with Venmo</a>
+	{% endif %}
 </body>
 </html>

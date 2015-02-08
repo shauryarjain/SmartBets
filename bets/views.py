@@ -28,6 +28,22 @@ class RoomView(generic.TemplateView):
     model = BetRoom
     template_name = 'bets/room.html'
 
+def room_view(request, url):
+    try:
+        room = BetRoom.objects.get(url=url)
+        print room
+    except:
+        # Redisplay the question voting form.
+        return render(request, 'bets/room.html', {
+            'question': b,
+            'error_message': "You didn't select a choice.",
+        })
+    else:
+        return render(request, 'bets/room.html', {
+            'bet_room': room.room_name,
+            })
+
+
 def make_betroom(request):
     rand = ''.join(random.choice('0123456789abcdefghijklmnopqrstuvwxyz') for i in range(12))
     try: 
@@ -46,7 +62,6 @@ def make_betroom(request):
                        )
             o.save()
         print '8'*80
-
     except:
         # Redisplay the question voting form.
         return render(request, 'bets/room.html', {
@@ -59,7 +74,7 @@ def make_betroom(request):
         # Always return an HttpResponseRedirect after successfully dealing
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
-        return HttpResponseRedirect(reverse('room'))
+        return HttpResponseRedirect(reverse('room', args=[rand]))
 
 # def vote(request, question_id):
 #     p = get_object_or_404(Question, pk=question_id)
