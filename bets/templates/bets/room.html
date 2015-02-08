@@ -1,11 +1,11 @@
-
+{% load staticfiles %}
 <!DOCTYPE html>
 <html>
 <head>
 	<title>
 		{{ bet_room }}
 	</title>
-	<link rel="stylesheet" type="text/css" src="room_style.css">
+	<link rel="stylesheet" type="text/css" href="{% static 'room_style.css' %}">
 </head>
 <body>
 	{% for b in bets.all %}
