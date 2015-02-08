@@ -33,7 +33,7 @@
 			<input type="submit" value="Make A Bet" />
 		</form>
 	{% else %}
-		<a href = "https://api.venmo.com/v1/oauth/authorize?client_id=2347&scope=make_payments%20access_profile&redirect_uri=http://127.0.0.1:8000/room/{{ url }}/">Authenticate with Venmo</a>
+		<a href = "https://api.venmo.com/v1/oauth/authorize?client_id=2347&scope=make_payments%20access_profile&redirect_uri=https://hidden-plateau-5856.herokuapp.com/room/{{ url }}/">Authenticate with Venmo</a>
 	{% endif %}
 </body>
 </html>
